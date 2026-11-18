@@ -65,24 +65,38 @@ def tile(i):
     return x, y
 
 
+CATS = ["WORLD", "EUROPE", "HEALTH", "CYBER", "BUSINESS", "ASIA"]
+CATCOLORS = [ACCENT, BLUE, (146, 43, 33), (90, 60, 140), (22, 130, 70), GOLD]
+
+
 def card(i):
     x, y = tile(i)
     d.rounded_rectangle((x, y, x + cw, y + ch), radius=14, fill=CARD)
+    cc = CATCOLORS[i]
+    d.rounded_rectangle((x, y, x + 10, y + ch), radius=5, fill=cc)
+    # category chip
+    chf = font(15)
+    tw = d.textlength(CATS[i], font=chf)
+    d.rounded_rectangle((x + 26, y + 16, x + 26 + tw + 20, y + 42), radius=11, fill=cc)
+    d.text((x + 36, y + 20), CATS[i], font=chf, fill=(255, 255, 255))
     return x, y
 
 
 def text_block(x, y, headline, detail, hcolor=INK):
     tx = x + 132
     maxw = cw - 132 - 18
-    fh = font(31)
-    lines = wrap(d, headline, fh, maxw)
-    cy = y + 22
-    for ln in lines[:3]:
-        d.text((tx, cy), ln, font=fh, fill=hcolor)
-        cy += 34
+    fh = font(30)
+    hl = wrap(d, headline, fh, maxw)[:3]
     fd = font(19, False)
-    for ln in wrap(d, detail, fd, maxw)[:5]:
-        d.text((tx, cy + 4), ln, font=fd, fill=MUTED)
+    dl = wrap(d, detail, fd, maxw)[:5]
+    total = len(hl) * 33 + 6 + len(dl) * 24
+    cy = y + 20 + max(0, (ch - 60 - total) // 2)
+    for ln in hl:
+        d.text((tx, cy), ln, font=fh, fill=hcolor)
+        cy += 33
+    cy += 6
+    for ln in dl:
+        d.text((tx, cy), ln, font=fd, fill=MUTED)
         cy += 24
 
 
